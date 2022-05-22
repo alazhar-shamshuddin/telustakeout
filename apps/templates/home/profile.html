@@ -11,8 +11,6 @@
 
   {% include 'includes/navigation.html' %}
 
-  {{ user.username }}
-
   <section>
     <div class="page-header min-vh-100">
       <div class="container">
@@ -59,10 +57,20 @@
 
                   <div class="card-body p-0 my-3">
                     <div class="row">
-                      <div class="col-md-12 ps-md-2">
+                      <div class="col-md-6 ps-md-2">
                         <div class="input-group input-group-static mb-4">
                           <label>Username</label>
-                          <input type="username" class="form-control text-gray" value="{{ user.username }}" disabled>
+                          <input type="text" class="form-control text-gray" value="{{ user.username }}" disabled>
+                        </div>
+                      </div>
+                      <div class="col-md-6 ps-md-2">
+                        <div class="input-group input-group-static mb-4">
+                          <label>Is Telus TakeOut Employee</label>
+                          {% if user.is_employee %}
+                            <input type="text" class="form-control text-gray" value="Yes" disabled>
+                          {% else %}
+                            <input type="text" class="form-control text-gray" value="No" disabled>
+                          {% endif %}
                         </div>
                       </div>
                       <div class="col-md-12 ps-md-2">
@@ -75,9 +83,9 @@
                         <div class="input-group input-group-static mb-4">
                           <label>Full Name</label>
                           {% if user.full_name %}
-                            {{ form.full_name(class="form-control", type="full_name", placeholder="Full Name", value=user.full_name) }}
+                            {{ form.full_name(class="form-control", type="text", placeholder="Full Name", value=user.full_name) }}
                           {% else %}
-                            {{ form.full_name(class="form-control", type="full_name", placeholder="Full Name") }}
+                            {{ form.full_name(class="form-control", type="text", placeholder="Full Name") }}
                           {% endif %}
                         </div>
                       </div>
@@ -85,9 +93,9 @@
                         <div class="input-group input-group-static mb-4">
                           <label>Phone Number</label>
                           {% if user.phone %}
-                            {{ form.phone(class="form-control", type="phone", placeholder="Phone Number", value=user.phone) }}
+                            {{ form.phone(class="form-control", type="tel", placeholder="555-555-5555", pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}", value=user.phone) }}
                           {% else %}
-                            {{ form.phone(class="form-control", type="phone", placeholder="Phone Number") }}
+                            {{ form.phone(class="form-control", type="tel", placeholder="555-555-5555", pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}") }}
                           {% endif %}
                         </div>
                       </div>
@@ -95,9 +103,9 @@
                         <div class="input-group input-group-static mb-4">
                           <label>Address</label>
                           {% if user.address %}
-                            {{ form.address(class="form-control", type="address", placeholder="Address", value=user.address) }}
+                            {{ form.address(class="form-control", type="text", placeholder="123 Main Street, Vancouver, BC V1V 1V1", value=user.address) }}
                           {% else %}
-                            {{ form.address(class="form-control", type="address", placeholder="Address") }}
+                            {{ form.address(class="form-control", type="text", placeholder="123 Main Street, Vancouver, BC V1V 1V1") }}
                           {% endif %}
                         </div>
                       </div>

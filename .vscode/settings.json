@@ -1,8 +1,17 @@
 {
     "cSpell.words": [
+        "fullscreen",
+        "javascripts",
+        "Nucleo",
         "signin",
+        "signup",
         "SQLALCHEMY",
         "Telus",
+        "venv",
+        "WSGI",
         "wtforms"
-    ]
+    ],
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintPath": ".venv/Scripts/pylint",
 }

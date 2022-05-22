@@ -70,12 +70,21 @@
                     </div>
                   </div>
                 </li>
+                {% if current_user.is_employee %}
+                  <li class="nav-item dropdown dropdown-hover mx-2">
+                    <a href="/manage-orders" class="nav-link ps-2 d-flex cursor-pointer align-items-center" aria-expanded="false">
+                      <i class="material-icons opacity-6 me-2 text-md">checklist</i>
+                      Manage Orders
+                    </a>
+                  </li>
+                {% endif %}
+
                 {% if current_user.is_authenticated %}
                   <li class="nav-item ms-lg-auto">
                     <a class="nav-link nav-link-icon me-2"
                       href="{{ url_for('authentication_blueprint.logout') }}">
                       <i class="fa fa-sign-out me-1"></i>
-                      <p class="d-inline text-sm z-index-1 font-weight-bold" data-bs-toggle="tooltip" data-bs-placement="bottom">Logout</p>
+                      <p class="d-inline text-sm z-index-1 font-weight-bold" data-bs-toggle="dropdown" data-bs-placement="bottom">Logout</p>
                     </a>
                   </li>
                 {% endif %}

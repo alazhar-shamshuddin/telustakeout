@@ -16,8 +16,9 @@ class Users(db.Model, UserMixin):
     username = db.Column(db.String(64), unique=True)
     email = db.Column(db.String(64), unique=True)
     full_name = db.Column(db.String(64))
-    phone = db.Column(db.String(10))
+    phone = db.Column(db.String(12))
     address = db.Column(db.String(255))
+    is_employee = db.Column(db.Boolean, default=False, nullable=False)
     password = db.Column(db.LargeBinary)
 
     def __init__(self, **kwargs):

@@ -1,0 +1,11 @@
+# Ignore byte-compiled/optimized/DLL files.
+__pycache__/
+*.py[cod]
+
+# Ignore files containing application data.
+*.sqlite3
+*.log
+
+# Ignore environment setting files and Python's virtual environment folder.
+.env*
+.venv/

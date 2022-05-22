@@ -1,0 +1,129 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Profile {% endblock %}
+
+{% block body_class %} contact-us {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  {% include 'includes/navigation.html' %}
+
+  {{ user.username }}
+
+  <section>
+    <div class="page-header min-vh-100">
+      <div class="container">
+        <div class="row">
+          <div class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 start-0 text-center justify-content-center flex-column">
+            <div class="position-relative h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center" style="background-image: url('/static/assets/img/illustrations/illustration-signin.jpg'); background-size: cover;" loading="lazy"></div>
+          </div>
+          <div class="col-xl-5 col-lg-6 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
+            <div class="card d-flex blur justify-content-center shadow-lg my-sm-0 my-sm-6 mt-8 mb-5">
+              <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg p-3">
+                  <h3 class="text-white text-primary mb-0">
+                    {% if user.full_name %}
+                      Your Profile, {{ user.full_name }}
+                    {% else %}
+                      Your Profile
+                    {% endif %}
+                  </h3>
+                </div>
+              </div>
+
+              <div class="card-body">
+                {% if success %}
+                  <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                    <span class="alert-text"><strong>Success!</strong> Your profile was updated.</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                {% elif not success and msg %}
+                  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <span class="alert-icon"><i class="ni ni-like-2"></i></span>
+                    <span class="alert-text"><strong>Oops!</strong> We couldn't update your profile!  {{ msg }}</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                {% endif %}
+
+                <form role="form" method="post" action="">
+
+                  {{ form.hidden_tag() }}
+
+                  <div class="card-body p-0 my-3">
+                    <div class="row">
+                      <div class="col-md-12 ps-md-2">
+                        <div class="input-group input-group-static mb-4">
+                          <label>Username</label>
+                          <input type="username" class="form-control text-gray" value="{{ user.username }}" disabled>
+                        </div>
+                      </div>
+                      <div class="col-md-12 ps-md-2">
+                        <div class="input-group input-group-static mb-4">
+                          <label>Email</label>
+                          {{ form.email(class="form-control", type="email", placeholder="Email", value=user.email, required="true") }}
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="input-group input-group-static mb-4">
+                          <label>Full Name</label>
+                          {% if user.full_name %}
+                            {{ form.full_name(class="form-control", type="full_name", placeholder="Full Name", value=user.full_name) }}
+                          {% else %}
+                            {{ form.full_name(class="form-control", type="full_name", placeholder="Full Name") }}
+                          {% endif %}
+                        </div>
+                      </div>
+                      <div class="col-md-12 ps-md-2">
+                        <div class="input-group input-group-static mb-4">
+                          <label>Phone Number</label>
+                          {% if user.phone %}
+                            {{ form.phone(class="form-control", type="phone", placeholder="Phone Number", value=user.phone) }}
+                          {% else %}
+                            {{ form.phone(class="form-control", type="phone", placeholder="Phone Number") }}
+                          {% endif %}
+                        </div>
+                      </div>
+                      <div class="col-md-12 ps-md-2">
+                        <div class="input-group input-group-static mb-4">
+                          <label>Address</label>
+                          {% if user.address %}
+                            {{ form.address(class="form-control", type="address", placeholder="Address", value=user.address) }}
+                          {% else %}
+                            {{ form.address(class="form-control", type="address", placeholder="Address") }}
+                          {% endif %}
+                        </div>
+                      </div>
+                      <div class="col-md-12 ps-md-2">
+                        <div class="input-group input-group-static mb-4">
+                          <label>Password</label>
+                          {{ form.password(class="form-control", type="password", placeholder="Password") }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12 text-center">
+                        <button type="submit" name="profile" class="btn bg-gradient-primary mt-3 mb-0">Save</button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

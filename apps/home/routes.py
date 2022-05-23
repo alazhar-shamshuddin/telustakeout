@@ -1,7 +1,3 @@
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 from apps.home import blueprint
 from flask import render_template, request
 from flask_login import login_required, current_user
@@ -9,8 +5,8 @@ from jinja2 import TemplateNotFound
 
 from apps import db
 from apps.authentication.util import hash_pass
-from apps.authentication.forms import UpdateAccountForm
-from apps.authentication.models import Users
+from apps.authentication.forms import UpdateAccountForm, CreateOrderForm
+from apps.authentication.models import Users, Orders, OrderDetails
 from pprint import pprint
 
 
@@ -24,8 +20,6 @@ def index():
 @login_required
 def profile():
     update_account_form = UpdateAccountForm(request.form)
-
-    pprint(request.form)
 
     if 'profile' in request.form:
         username = current_user.username
@@ -55,10 +49,42 @@ def profile():
                                 form=update_account_form)
 
     else:
-        print('in else')
         return render_template('home/profile.html',
                                user=current_user,
                                form=update_account_form)
+
+
+@blueprint.route('/order', methods=['GET', 'POST'])
+@login_required
+def order():
+    create_order_form = CreateOrderForm(request.form)
+
+    foods = {
+        'Pizza': {
+            'toppings': ['Black Olives', 'Mushrooms', 'Pepperoni', 'Pineapples'],
+        },
+        'Sandwich': {
+            'toppings': ['Black Olives', 'Lettuce', 'Pineapples', 'Tomatoes'],
+        },
+    }
+
+    if 'order' in request.form:
+        order = Orders(**request.form)
+        db.session.add(order)
+        #db.session.commit()
+
+        return render_template('accounts/order.html',
+                            msg='Order submitted successfully',
+                            success=True,
+                            user=current_user,
+                            foods=foods,
+                            form=create_order_form)
+
+    else:
+        return render_template('home/order.html',
+                                user=current_user,
+                                foods=foods,
+                                form=create_order_form)
 
 
 @blueprint.route('/<template>')

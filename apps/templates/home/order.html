@@ -1,0 +1,236 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Order Food! {% endblock %}
+
+{% block body_class %} index-page {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  {% include 'includes/navigation.html' %}
+
+  <div class="page-header min-vh-75" style="background-image: url('https://images.unsplash.com/photo-1630752708689-02c8636b9141?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2490&q=80')">
+    <span class="mask bg-gradient-dark opacity-6"></span>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 mx-auto">
+          <div class="text-center">
+            <h1 class="text-white">Let's get you fed!</h1>
+            <h3 class="text-white"><em>Telus</em> what you want... </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
+    <div class="container">
+      <form>
+        <div class="row">
+          <div class="col">
+            {{ form.username(class="form-control", type="hidden", value=user.username) }}
+            {{ form.status(class="form-control", type="hidden", value="Ordered") }}
+
+            <div id="step01">
+              <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                <h4 class="text-white text-primary mb-0">
+                  Delivery or Pickup?
+                </h4>
+              </div>
+              <div class="row">
+                <div class="form-check col-md-1 ps-md-2 my-4 mx-4">
+                  <input class="form-check-input" type="radio" name="deliveryOptionsRadio" id="deliveryRadio">
+                  <label class="custom-control-label" for="deliveryRadio">Delivery</label>
+                </div>
+                <div class="form-check col-md-1 ps-md-2 my-4 mx-4">
+                  <input class="form-check-input" type="radio" name="deliveryOptionsRadio" id="pickupRadio">
+                  <label class="custom-control-label" for="pickupRadio">Pickup</label>
+                </div>
+              </div>
+            </div>
+
+            <div id="step02">
+              <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                <h4 class="text-white text-primary mb-0">
+                  How can we reach you?
+                </h4>
+              </div>
+              <div class="row">
+                <div class="input-group input-group-static my-4 mx-4">
+                  <label>Email</label>
+                  {{ form.email(class="form-control", type="email", placeholder="Email", value=user.email, required="true") }}
+                </div>
+                <div class="input-group input-group-static mb-4 mx-4">
+                  <label>Phone Number</label>
+                  {% if user.phone %}
+                    {{ form.phone(class="form-control", type="tel", placeholder="555-555-5555", pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}", value=user.phone) }}
+                  {% else %}
+                    {{ form.phone(class="form-control", type="tel", placeholder="555-555-5555", pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}") }}
+                  {% endif %}
+                </div>
+                <div class="input-group input-group-static mb-4 mx-4" id="address">
+                  <label>Address</label>
+                  {% if user.address %}
+                    {{ form.address(class="form-control", type="text", placeholder="123 Main Street, Vancouver, BC V1V 1V1", value=user.address, id="addressInput") }}
+                  {% else %}
+                    {{ form.address(class="form-control", type="text", placeholder="123 Main Street, Vancouver, BC V1V 1V1", id="addressInput") }}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div id="step03">
+              <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                <h4 class="text-white text-primary mb-0">
+                  When do you want your food?
+                </h4>
+              </div>
+              <div class="row">
+                <div class="input-group input-group-static my-4 mx-4">
+                  <label>Requested Datetime</label>
+                  <input type="datetime-local" class="form-control">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div id="step04">
+              <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                <h4 class="text-white text-primary mb-0">
+                  What do you want to eat?
+                </h4>
+              </div>
+              <div class="row">
+                {% for food in foods %}
+                  {% set id = (food.lower() + 'Radio').replace(' ', '') %}
+
+                  <div class="form-check col-md-1 ps-md-2 my-4 mx-4">
+                    <input class="form-check-input" type="radio" name="foodOptionsRadio" id="{{ id }}">
+                    <label class="custom-control-label" for="{{ id }}">{{ food }}</label>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div id="step05">
+              <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                <h4 class="text-white text-primary mb-0">
+                  What toppings do you want?
+                </h4>
+              </div>
+              <div class="row" id="pizzaToppings">
+                {% for topping in foods['Pizza']['toppings'] %}
+                  {% set id = ('pizza' + topping + 'Checkbox').replace(' ', '') %}
+                  <div class="form-check col-md-1 ps-md-2 my-4 mx-4">
+                    <input class="form-check-input" type="checkbox" value="" id="{{ id }}">
+                    <label class="form-check-label" for="{{ id }}">
+                      {{ topping }}
+                    </label>
+                  </div>
+                {% endfor %}
+              </div>
+
+              <div class="row" id="sandwichToppings">
+                {% for topping in foods['Sandwich']['toppings'] %}
+                  {% set id = ('sandwich' + topping + 'Checkbox').replace(' ', '') %}
+                  <div class="form-check col-md-1 ps-md-2 my-4 mx-4">
+                    <input class="form-check-input" type="checkbox" value="" id="{{ id }}">
+                    <label class="form-check-label" for="{{ id }}">
+                      {{ topping }}
+                    </label>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div id="step06">
+              <div class="col-xs-12 text-center my-5">
+                <button class="btn btn-icon btn-2 btn-outline-secondary" type="button" id="addItemToOrderButton">
+                    Add Item to Order
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 text-center">
+            <a class="btn btn-icon btn-3 bg-gradient-secondary" href="/" role="button"><i class="material-icons">close</i></a>
+            <button class="btn btn-icon bg-gradient-secondary" type="button">
+              <span class="btn-inner--text">Submit Order</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    // Hide the address field on load by default.  We will subsequently
+    // show it if the delivery option is selected.
+    $('#addressInput').prop('required', false)
+    $('#address').hide();
+
+    // Trigger a change when when the radio buttons for delivery/pickup are
+    // clicked.
+    $('#step01').on('click',function() {
+      $('input[type=radio]', this).trigger('change');
+    });
+
+    // Hide Step 05 (the selection of toppings) until the food product
+    // is selected.
+    $('#step05').hide();
+    $('#pizzaToppings').hide();
+    $('#sandwichToppings').hide();
+
+    // Process changes to the two sets of radio buttons:
+    //   1. Ask for the delivery address if delivery is selected.
+    //   2. Show toppings for the selected food product.
+    $('input[type=radio]').on('change', function() {
+      if ($('#deliveryRadio').is(':checked')) {
+        $('#addressInput').prop('required', true)
+        $('#address').show();
+      }
+      else if ($('#pickupRadio').is(':checked')) {
+        $('#addressInput').prop('required', false)
+        $('#address').hide();
+      }
+
+      if ($('#pizzaRadio').is(':checked')) {
+        $('#pizzaToppings').show();
+        $('#sandwichToppings').hide();
+        $('#step05 h4').html('What toppings do you want on your pizza?');
+        $('#step05').show();
+      }
+      else if ($('#sandwichRadio').is(':checked')) {
+        $('#pizzaToppings').hide();
+        $('#sandwichToppings').show();
+        $('#step05 h4').html('What toppings do you want on your sandwich?');
+        $('#step05').show();
+      }
+    });
+
+    // Allow only 3 toppings to be selected for each food product.
+    let maxToppings = 3;
+
+    $('input[type=checkbox]').on('change', function () {
+      if ($('#pizzaToppings input[type=checkbox]:checked').length > maxToppings ||
+          $('#sandwichToppings input[type=checkbox]:checked').length > maxToppings) {
+          $(this).prop('checked', false);
+          alert('Please choose a maximum of ' + maxToppings + ' toppings.');
+      }
+    });
+
+    $('#addItemToOrderButton').on('click', function() {
+      alert('Sorry, this features has yet to be implemented.');
+    });
+  });
+</script>
+{% endblock javascripts %}

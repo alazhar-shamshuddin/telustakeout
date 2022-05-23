@@ -25,17 +25,17 @@ for pizzas and subs (sandwiches).
 
 1. If users order pizza, they may select up to 3 toppings from the following
    list:
-    - Pepperoni
+    - Black Olives
     - Mushrooms
-    - BlackOlives
+    - Pepperonis
     - Pineapple
 
 1. If users order sandwiches, they may select up to 3 toppings from the
    following list:
-        Lettuce
-        Tomato
-        BlackOlives
-        Pineapple
+    - Black Olives
+    - Lettuce
+    - Pineapple
+    - Tomato
 
 1. Employees must be able to access a list of orders.  This list must:
     - Include customer details (e.g., username, phone number, requested
@@ -157,9 +157,9 @@ users: {
 orders: {
   id: int                 # Primary key
   username: str           # Foreign key
-  delivery_method: str    # [Pickup|Delivery]
-  delivery_address: str   # If delivery_method = Delivery
-  contact_phone: str
+  is_delivery: bool
+  delivery_address: str   # If is_delivery == True
+  phone: str
   ordered_at: datetime
   requested_for: datetime # When the customer wants the order
   status: str             # [Ordered|Complete|Canceled|Abandoned]

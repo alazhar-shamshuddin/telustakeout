@@ -1,7 +1,3 @@
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 from flask import render_template, redirect, request, url_for
 from flask_login import (
     current_user,
@@ -27,22 +23,23 @@ def route_default():
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = LoginForm(request.form)
+
     if 'login' in request.form:
 
-        # read form data
+        # Read form data.
         username = request.form['username']
         password = request.form['password']
 
-        # Locate user
+        # Locate the user.
         user = Users.query.filter_by(username=username).first()
 
-        # Check the password
+        # Check the password.
         if user and verify_pass(password, user.password):
 
             login_user(user)
             return redirect(url_for('authentication_blueprint.route_default'))
 
-        # Something (user or pass) is not ok
+        # Something (user or password) is not okay.
         return render_template('accounts/login.html',
                                msg='Wrong username or password',
                                form=login_form)
@@ -61,7 +58,7 @@ def signup():
         username = request.form['username']
         email = request.form['email']
 
-        # Check username exists
+        # Check that the username exists.
         user = Users.query.filter_by(username=username).first()
         if user:
             return render_template('accounts/signup.html',
@@ -69,7 +66,7 @@ def signup():
                                    success=False,
                                    form=create_account_form)
 
-        # Check email exists
+        # Check that the email exists.
         user = Users.query.filter_by(email=email).first()
         if user:
             return render_template('accounts/signup.html',
@@ -77,7 +74,7 @@ def signup():
                                    success=False,
                                    form=create_account_form)
 
-        # else we can create the user
+        # Otherwise create the user.
         user = Users(**request.form)
         db.session.add(user)
         db.session.commit()

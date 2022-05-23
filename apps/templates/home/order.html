@@ -7,6 +7,24 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
 
+{% macro with_errors(field) %}
+  <div class="input-group input-group-static mb-4 px-4">
+    <label>{{ field.label }}</label>
+    {% if field.errors %}
+      {% set css_class = 'form-control is-invalid ' + kwargs.pop('class', '') %}
+      {{ field(class=css_class, **kwargs) }}
+      <div class="invalid-feedback">
+        {% for error in field.errors %}
+          {{ error|e }}
+        {% endfor %}
+      </div>
+    {% else %}
+      {% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+      {{ field(class=css_class, **kwargs) }}
+    {% endif %}
+  </div>
+{% endmacro %}
+
 {% block content %}
 
   {% include 'includes/navigation.html' %}
@@ -26,12 +44,11 @@
   </div>
   <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
     <div class="container">
-      <form>
+      <form method="post" novalidate>
+        {{ form.csrf_token }}
+
         <div class="row">
           <div class="col">
-            {{ form.username(class="form-control", type="hidden", value=user.username) }}
-            {{ form.status(class="form-control", type="hidden", value="Ordered") }}
-
             <div id="step01">
               <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
                 <h4 class="text-white text-primary mb-0">
@@ -39,14 +56,25 @@
                 </h4>
               </div>
               <div class="row">
-                <div class="form-check col-md-1 ps-md-2 my-4 mx-4">
-                  <input class="form-check-input" type="radio" name="deliveryOptionsRadio" id="deliveryRadio">
-                  <label class="custom-control-label" for="deliveryRadio">Delivery</label>
-                </div>
-                <div class="form-check col-md-1 ps-md-2 my-4 mx-4">
-                  <input class="form-check-input" type="radio" name="deliveryOptionsRadio" id="pickupRadio">
-                  <label class="custom-control-label" for="pickupRadio">Pickup</label>
-                </div>
+                {% for subfield in form.delivery_pickup %}
+                  <div class="form-check col-md-1 ps-md-2 mt-4 mx-4">
+                    {{ subfield(class="form-check-input") }}
+                    {{ subfield.label(class="custom-control-label") }}
+                  </div>
+                  <div class="invalid-feedback">error</div>
+                {% endfor %}
+                {% if form.delivery_pickup.errors %}
+                  <div class="input-group mb-4 px-4">
+                    <div class="form-control is-invalid" style="display: none"></div>
+                    <div class="invalid-feedback">
+                      {% for error in form.delivery_pickup.errors %}
+                        {{ error|e }}
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% else %}
+                  <div class="mt-4 px-4"></div>
+                {% endif %}
               </div>
             </div>
 
@@ -57,26 +85,10 @@
                 </h4>
               </div>
               <div class="row">
-                <div class="input-group input-group-static my-4 mx-4">
-                  <label>Email</label>
-                  {{ form.email(class="form-control", type="email", placeholder="Email", value=user.email, required="true") }}
-                </div>
-                <div class="input-group input-group-static mb-4 mx-4">
-                  <label>Phone Number</label>
-                  {% if user.phone %}
-                    {{ form.phone(class="form-control", type="tel", placeholder="555-555-5555", pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}", value=user.phone) }}
-                  {% else %}
-                    {{ form.phone(class="form-control", type="tel", placeholder="555-555-5555", pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}") }}
-                  {% endif %}
-                </div>
-                <div class="input-group input-group-static mb-4 mx-4" id="address">
-                  <label>Address</label>
-                  {% if user.address %}
-                    {{ form.address(class="form-control", type="text", placeholder="123 Main Street, Vancouver, BC V1V 1V1", value=user.address, id="addressInput") }}
-                  {% else %}
-                    {{ form.address(class="form-control", type="text", placeholder="123 Main Street, Vancouver, BC V1V 1V1", id="addressInput") }}
-                  {% endif %}
-                </div>
+                <div class="mt-4"></div>
+                {{ with_errors(form.email, type="email", placeholder='you@domain.com') }}
+                {{ with_errors(form.phone, type="tel", placeholder='555-555-5555') }}
+                {{ with_errors(form.address, type="text", placeholder="123 Main Street, Vancouver, BC V1V 1V1")}}
               </div>
             </div>
 
@@ -87,10 +99,8 @@
                 </h4>
               </div>
               <div class="row">
-                <div class="input-group input-group-static my-4 mx-4">
-                  <label>Requested Datetime</label>
-                  <input type="datetime-local" class="form-control">
-                </div>
+                <div class="mt-4"></div>
+                {{ with_errors(form.requested_at, type="datetime-local") }}
               </div>
             </div>
           </div>
@@ -102,18 +112,25 @@
                 </h4>
               </div>
               <div class="row">
-                {% for food in foods %}
-                  {% set id = (food.lower() + 'Radio').replace(' ', '') %}
-
-                  <div class="form-check col-md-1 ps-md-2 my-4 mx-4">
-                    {% if food.lower() == selectedFood %}
-                      <input class="form-check-input" type="radio" name="foodOptionsRadio" id="{{ id }}" checked>
-                    {% else %}
-                      <input class="form-check-input" type="radio" name="foodOptionsRadio" id="{{ id }}">
-                    {% endif %}
-                    <label class="custom-control-label" for="{{ id }}">{{ food }}</label>
+                {% for subfield in form.item %}
+                  <div class="form-check col-md-1 ps-md-2 mt-4 mx-4">
+                    {{ subfield(class="form-check-input") }}
+                    {{ subfield.label(class="custom-control-label") }}
                   </div>
+                  <div class="invalid-feedback">error</div>
                 {% endfor %}
+                {% if form.item.errors %}
+                  <div class="input-group mb-4 px-4">
+                    <div class="form-control is-invalid" style="display: none"></div>
+                    <div class="invalid-feedback">
+                      {% for error in form.item.errors %}
+                        {{ error|e }}
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% else %}
+                  <div class="mt-4 px-4">{{ form.item.selected }}</div>
+                {% endif %}
               </div>
             </div>
 
@@ -160,8 +177,8 @@
         <div class="row">
           <div class="col-xs-12 text-center">
             <a class="btn btn-icon btn-3 bg-gradient-secondary" href="/" role="button"><i class="material-icons">close</i></a>
-            <button class="btn btn-icon bg-gradient-secondary" type="submit" name="order">
-              <span class="btn-inner--text">Submit Order</span>
+            <button type="submit" name="order" class="btn btn-icon bg-gradient-secondary">
+              Submit Order
             </button>
           </div>
         </div>
@@ -179,8 +196,8 @@
   $(document).ready(function() {
     // Hide the address field on load by default.  We will subsequently
     // show it if the delivery option is selected.
-    $('#addressInput').prop('required', false)
-    $('#address').hide();
+    $('#address').prop('required', false)
+    $('#address').parent().hide();
 
     // Trigger a change when when the radio buttons for delivery/pickup are
     // clicked.
@@ -194,26 +211,32 @@
     $('#pizzaToppings').hide();
     $('#sandwichToppings').hide();
 
+    // Map deliver-pickup radio option IDs for easy reference.
+    let deliveryRadioOption = '#delivery_pickup-0';
+    let pickupRadioOption = '#delivery_pickup-1';
+
     // Process changes to the two sets of radio buttons:
     //   1. Ask for the delivery address if delivery is selected.
     //   2. Show toppings for the selected food product.
     $('input[type=radio]').on('change', function() {
-      if ($('#deliveryRadio').is(':checked')) {
-        $('#addressInput').prop('required', true)
-        $('#address').show();
+      if ($(deliveryRadioOption).is(':checked')) {
+        $('#address').prop('required', true)
+        $('#address').parent().show();
       }
-      else if ($('#pickupRadio').is(':checked')) {
-        $('#addressInput').prop('required', false)
-        $('#address').hide();
+      else if ($(pickupRadioOption).is(':checked')) {
+        $('#address').prop('required', false)
+        $('#address').parent().hide();
       }
 
-      if ($('#pizzaRadio').is(':checked')) {
+      let pizzaRadioOption = '#item-0';
+      let sandwichRadioOption = '#item-1';
+      if ($(pizzaRadioOption).is(':checked')) {
         $('#pizzaToppings').show();
         $('#sandwichToppings').hide();
         $('#step05 h4').html('What toppings do you want on your pizza?');
         $('#step05').show();
       }
-      else if ($('#sandwichRadio').is(':checked')) {
+      else if ($(sandwichRadioOption).is(':checked')) {
         $('#pizzaToppings').hide();
         $('#sandwichToppings').show();
         $('#step05 h4').html('What toppings do you want on your sandwich?');

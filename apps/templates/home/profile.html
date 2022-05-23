@@ -94,7 +94,7 @@
                         </div>
                       </div>
 
-                      {{ with_errors(form.email, placeholder='Email') }}
+                      {{ with_errors(form.email, type="email", placeholder='you@domain.com') }}
                       {{ with_errors(form.full_name, placeholder='Full Name') }}
                       {{ with_errors(form.phone, type="tel", placeholder="555-555-5555") }}
                       {{ with_errors(form.address, placeholder="123 Main Street, Vancouver, BC V1V 1V1") }}
@@ -103,7 +103,9 @@
                     </div>
                     <div class="row">
                       <div class="col-md-12 text-center">
-                        <button type="submit" name="profile" class="btn bg-gradient-primary mt-3 mb-0">Save</button>
+                        <button type="submit" name="profile" class="btn bg-gradient-primary mt-3 mb-0">
+                          Save
+                        </button>
                       </div>
                     </div>
                   </div>

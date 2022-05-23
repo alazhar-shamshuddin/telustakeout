@@ -9,6 +9,7 @@ from flask_wtf import FlaskForm
 from wtforms import (
     BooleanField,
     DateTimeField,
+    DateTimeLocalField,
     HiddenField,
     PasswordField,
     RadioField,
@@ -23,8 +24,6 @@ from wtforms.validators import (
     Length
 )
 
-
-# login and registration
 
 class LoginForm(FlaskForm):
     username = StringField('Username',
@@ -81,18 +80,39 @@ class UpdateAccountForm(FlaskForm):
 
 
 class CreateOrderForm(FlaskForm):
-    username = HiddenField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=64)])
+    delivery_pickup = RadioField(
+        'Delivery or Pickup',
+        choices=[('delivery','Delivery'), ('pickup','Pickup')],
+        default=None,
+        validators=[DataRequired()])
+    address = StringField('Address', validators=[Length(max=255)])
+    phone = StringField('Phone Number', validators=[DataRequired(), Length(max=12)])
+    requested_at = DateTimeLocalField(
+        'Requested At',
+        format='%Y-%m-%dT%H:%M',
+        validators=[DataRequired()])
+    item = RadioField(
+        'Pizza or Sandwich',
+        choices=[('pizza','Pizza'), ('sandwich','Sandwich')],
+        default=None,
+        validators=[DataRequired()])
 
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    # username = HiddenField('Username', validators=[DataRequired()])
+    # ordered_at = HiddenField('Ordered At')
+    # status = HiddenField('Status')
 
-    is_delivery = BooleanField('IsDelivery', validators=[DataRequired()])
 
-    address = StringField('Address')
-
-    phone = StringField('Phone Number', validators=[Length(min=10, max=12)])
-
-    ordered_at = DateTimeField('Ordered At')
-
-    requested_at = DateTimeField('Requested At')
-
-    status = HiddenField('Status', validators=[AnyOf('Ordered')])
+class CreateOrderDetailsForm(FlaskForm):
+    #order_id = HiddenField('order_id', validators=[DataRequired()])
+    item = RadioField(
+        'Pizza or Sandwich',
+        choices=[('pizza','Pizza'), ('sandwich','Sandwich')],
+        default=None,
+        validators=[DataRequired()])
+    toppings = RadioField(
+        'Label',
+        choices=[(1,'description'), (2,'whatever')],
+        default=1,
+        coerce=int,
+        validators=[DataRequired()])

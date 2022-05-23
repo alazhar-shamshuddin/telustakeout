@@ -1,5 +1,6 @@
-from pickletools import UP_TO_NEWLINE
-from turtle import up, update
+from pprint import pprint
+from datetime import datetime, timedelta
+
 from apps.home import blueprint
 from flask import render_template, request
 from flask_login import login_required, current_user
@@ -9,7 +10,6 @@ from apps import db
 from apps.authentication.util import hash_pass
 from apps.authentication.forms import UpdateAccountForm, CreateOrderForm
 from apps.authentication.models import Users, Orders, OrderDetails
-from pprint import pprint
 
 
 @blueprint.route('/index')
@@ -52,9 +52,9 @@ def profile():
                 update_account_form.email.errors.append(message)
 
                 return render_template('home/profile.html',
-                                    success=False,
-                                    message=message,
-                                    form=update_account_form)
+                                       success=False,
+                                       message=message,
+                                       form=update_account_form)
 
             # Otherwise we can update the user's account info.
             current_user.email = request.form['email']
@@ -79,8 +79,6 @@ def profile():
 @blueprint.route('/order', methods=['GET', 'POST'])
 @login_required
 def order():
-    create_order_form = CreateOrderForm(request.form)
-
     foods = {
         'Pizza': {
             'toppings': ['Black Olives', 'Mushrooms', 'Pepperoni', 'Pineapples'],
@@ -101,25 +99,71 @@ def order():
         if selectedFood not in [x.lower() for x in foods.keys()]:
             selectedFood = None
 
-    if 'order' in request.form:
-        order = Orders(**request.form)
-        db.session.add(order)
-        #db.session.commit()
+    if request.method == 'GET':
+        create_order_form = CreateOrderForm(
+            username=current_user.username,
+            email=current_user.email,
+            phone=current_user.phone,
+            address=current_user.address,
+            requested_at=datetime.now() + timedelta(hours=1),
+            item=selectedFood
+        )
 
-        return render_template('accounts/order.html',
-                            msg='Order submitted successfully',
-                            success=True,
-                            user=current_user,
-                            foods=foods,
-                            selectedFood=selectedFood,
-                            form=create_order_form)
+        return render_template('home/order.html',
+                               foods=foods,
+                               selectedFood=selectedFood,
+                               form=create_order_form)
 
     else:
-        return render_template('home/order.html',
-                                user=current_user,
-                                foods=foods,
-                                selectedFood=selectedFood,
-                                form=create_order_form)
+        create_order_form = CreateOrderForm(request.form)
+        print('data: ')
+        pprint(create_order_form.data)
+        print('validation_erors:' )
+        pprint(create_order_form.errors)
+
+        if create_order_form.validate_on_submit():
+            pprint('is valid!')
+            custom_errors = False
+
+            if not create_order_form.delivery_pickup.data:
+                # The DataRequired validator for RadioFields doesn't work so
+                # this our temporary work around.
+                custom_errors = True
+                create_order_form.delivery_pickup.errors.append(
+                    'This field is required')
+
+            if create_order_form.delivery_pickup.data == 'delivery' and \
+               not create_order_form.address.data:
+               custom_errors = True
+               create_order_form.address.errors.append(
+                   'An address is required if you want us to deliver your order.')
+
+            if custom_errors:
+                print('found custom errors:')
+                pprint(create_order_form.errors)
+                return render_template('home/order.html',
+                                        success=False,
+                                        message='Error',
+                                        foods=foods,
+                                        selectedFood=selectedFood,
+                                        form=create_order_form)
+            else:
+                print('TOTALLy VALID')
+                pprint(request.from_values)
+                return render_template('home/order.html',
+                                    success=True,
+                                    foods=foods,
+                                    selectedFood=selectedFood,
+                                    form=create_order_form)
+
+        else:
+            print('not valid')
+            return render_template('home/order.html',
+                                    success=False,
+                                    message='Error',
+                                    foods=foods,
+                                    selectedFood=selectedFood,
+                                    form=create_order_form)
 
 
 @blueprint.route('/<template>')

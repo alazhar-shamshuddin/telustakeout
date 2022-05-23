@@ -7,6 +7,26 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
 
+{% macro with_errors(field) %}
+  <div class="col-md-12 ps-md-2">
+    <div class="input-group input-group-static mb-4">
+      <label>{{ field.label }}</label>
+      {% if field.errors %}
+        {% set css_class = 'form-control is-invalid ' + kwargs.pop('class', '') %}
+        {{ field(class=css_class, **kwargs) }}
+        <div class="invalid-feedback">
+          {% for error in field.errors %}
+            {{ error|e }}
+          {% endfor %}
+        </div>
+      {% else %}
+        {% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+        {{ field(class=css_class, **kwargs) }}
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
 {% block content %}
 
   {% include 'includes/navigation.html' %}
@@ -23,8 +43,8 @@
               <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                 <div class="bg-gradient-primary shadow-primary border-radius-lg p-3">
                   <h3 class="text-white text-primary mb-0">
-                    {% if user.full_name %}
-                      Your Profile, {{ user.full_name }}
+                    {% if form.full_name.data %}
+                      Your Profile, {{ form.full_name.data }}
                     {% else %}
                       Your Profile
                     {% endif %}
@@ -51,70 +71,60 @@
                   </div>
                 {% endif %}
 
-                <form role="form" method="post" action="">
-
+                <form class="row g-3" method="post" action="" novalidate>
+                  {{ form.csrf_token }}
                   {{ form.hidden_tag() }}
-
                   <div class="card-body p-0 my-3">
                     <div class="row">
                       <div class="col-md-6 ps-md-2">
                         <div class="input-group input-group-static mb-4">
-                          <label>Username</label>
-                          <input type="text" class="form-control text-gray" value="{{ user.username }}" disabled>
+                          <label>{{ form.username.label }}</label>
+                          {{ form.username(type="text", class="form-control text-gray", disabled="true") }}
                         </div>
                       </div>
                       <div class="col-md-6 ps-md-2">
                         <div class="input-group input-group-static mb-4">
-                          <label>Is Telus TakeOut Employee</label>
-                          {% if user.is_employee %}
-                            <input type="text" class="form-control text-gray" value="Yes" disabled>
+                          <label>{{ form.is_employee.label }}</label>
+                          {% if form.is_employee.data %}
+                            {{ form.is_employee(type="text", class="form-control text-gray", value="Yes", disabled="true") }}
                           {% else %}
-                            <input type="text" class="form-control text-gray" value="No" disabled>
+                            {{ form.is_employee(type="text", class="form-control text-gray", value="No", disabled="true") }}
                           {% endif %}
                         </div>
                       </div>
                       <div class="col-md-12 ps-md-2">
                         <div class="input-group input-group-static mb-4">
-                          <label>Email</label>
-                          {{ form.email(class="form-control", type="email", placeholder="Email", value=user.email, required="true") }}
+                          <label>{{ form.email.label }}</label>
+                          {{ form.email(class="form-control", type="email", placeholder="Email", required="true") }}
                         </div>
                       </div>
                       <div class="col-md-12">
                         <div class="input-group input-group-static mb-4">
-                          <label>Full Name</label>
-                          {% if user.full_name %}
-                            {{ form.full_name(class="form-control", type="text", placeholder="Full Name", value=user.full_name) }}
-                          {% else %}
-                            {{ form.full_name(class="form-control", type="text", placeholder="Full Name") }}
-                          {% endif %}
+                          <label>{{ form.full_name.label }}</label>
+                          {{ form.full_name(class="form-control", type="text", placeholder="Full Name") }}
+                        </div>
+                      </div>
+                      <div class="col-md-12 ps-md-2">
+                        <div class="input-group input-group-static mb-4 has-validation">
+                          <label>{{ form.phone.label }}</label>
+                          {{ form.phone(class="form-control", type="tel", placeholder="555-555-5555") }}
                         </div>
                       </div>
                       <div class="col-md-12 ps-md-2">
                         <div class="input-group input-group-static mb-4">
-                          <label>Phone Number</label>
-                          {% if user.phone %}
-                            {{ form.phone(class="form-control", type="tel", placeholder="555-555-5555", pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}", value=user.phone) }}
-                          {% else %}
-                            {{ form.phone(class="form-control", type="tel", placeholder="555-555-5555", pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}") }}
-                          {% endif %}
+                          <label>{{ form.address.label }}</label>
+                          {{ form.address(class="form-control is-valid", type="text", placeholder="123 Main Street, Vancouver, BC V1V 1V1") }}
+                          <div class="valid-feedback">Nice Job!.</div>
                         </div>
                       </div>
                       <div class="col-md-12 ps-md-2">
                         <div class="input-group input-group-static mb-4">
-                          <label>Address</label>
-                          {% if user.address %}
-                            {{ form.address(class="form-control", type="text", placeholder="123 Main Street, Vancouver, BC V1V 1V1", value=user.address) }}
-                          {% else %}
-                            {{ form.address(class="form-control", type="text", placeholder="123 Main Street, Vancouver, BC V1V 1V1") }}
-                          {% endif %}
+                          <label>{{ form.password.label }}</label>
+                          {{ form.password(class="form-control is-invalid", type="password", placeholder="Password") }}
+                          <div class="invalid-feedback">Email address is required.</div>
                         </div>
                       </div>
-                      <div class="col-md-12 ps-md-2">
-                        <div class="input-group input-group-static mb-4">
-                          <label>Password</label>
-                          {{ form.password(class="form-control", type="password", placeholder="Password") }}
-                        </div>
-                      </div>
+                      {{ with_errors(form.password, placeholder='foobar') }}
                     </div>
                     <div class="row">
                       <div class="col-md-12 text-center">
@@ -134,4 +144,22 @@
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+<script>
+(function () {
+'use strict'
+const forms = document.querySelectorAll('.requires-validation')
+Array.from(forms)
+  .forEach(function (form) {
+    form.addEventListener('submit', function (event) {
+    if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+    }
+
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+</script>
+{% endblock javascripts %}

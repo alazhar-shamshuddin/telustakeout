@@ -2,6 +2,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
+from re import L
 from urllib import request
 from xmlrpc.client import Boolean
 from flask_wtf import FlaskForm
@@ -10,6 +11,7 @@ from wtforms import (
     DateTimeField,
     HiddenField,
     PasswordField,
+    RadioField,
     SelectMultipleField,
     StringField
 )
@@ -49,21 +51,33 @@ class CreateAccountForm(FlaskForm):
 
 
 class UpdateAccountForm(FlaskForm):
-    email = StringField('Email',
-                        id='email_update',
-                        validators=[DataRequired(), Email()])
+    username = StringField('Username')
 
-    password = PasswordField('Password',
-                             id='pwd_update',
-                             validators=[DataRequired()])
+    email = StringField(
+        'Email',
+        validators=[
+            DataRequired(),
+            Email(),
+            Length(max=64)
+        ])
 
-    full_name = StringField('Full Name', id='full_name_update')
+    full_name = StringField(
+        'Full Name',
+        validators=[Length(max=64)])
 
-    phone = StringField('Phone Number',
-                        id='phone_update',
-                        validators=[Length(min=10, max=12)])
+    phone = StringField(
+        'Phone Number',
+        validators=[Length(max=12)])
 
-    address = StringField('Address', id='address_update')
+    address = StringField(
+        'Address',
+        validators=[Length(max=255)])
+
+    is_employee = BooleanField('Is Telus TakeOut Employee')
+
+    password = PasswordField(
+        'Password',
+        validators=[DataRequired()])
 
 
 class CreateOrderForm(FlaskForm):

@@ -1,5 +1,5 @@
 from pickletools import UP_TO_NEWLINE
-from turtle import up
+from turtle import up, update
 from apps.home import blueprint
 from flask import render_template, request
 from flask_login import login_required, current_user
@@ -21,9 +21,7 @@ def index():
 @blueprint.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    print('in profile...')
     if request.method == 'GET':
-        print('...in get')
         update_account_form = UpdateAccountForm(
             username=current_user.username,
             email=current_user.email,
@@ -34,26 +32,28 @@ def profile():
         )
         return render_template('home/profile.html',
                                form=update_account_form)
-    #if 'profile' in request.form:
+
     else:
         update_account_form = UpdateAccountForm(
             request.form,
             username=current_user.username)
-        pprint(update_account_form.data)
 
         if update_account_form.validate_on_submit():
-            print('...is valid')
-            pprint(update_account_form.data)
-
             username = current_user.username
             email = request.form['email']
 
             # Check if another user has the same email address.
             user = Users.query.filter_by(email=email).first()
             if user and (user.username != username):
+                message = (
+                    'This address is registered to another user; '
+                    'please use another email address.')
+
+                update_account_form.email.errors.append(message)
+
                 return render_template('home/profile.html',
-                                    msg='Email already registered to another user',
                                     success=False,
+                                    message=message,
                                     form=update_account_form)
 
             # Otherwise we can update the user's account info.
@@ -66,16 +66,13 @@ def profile():
             db.session.commit()
 
             return render_template('home/profile.html',
-                                    msg='Profile updated successfully',
                                     success=True,
                                     form=update_account_form)
 
         else:
-            print('...is NOT valid')
-            pprint(update_account_form.errors)
             return render_template('home/profile.html',
-                                   msg='Error!',
                                    success=False,
+                                   message='Error',
                                    form=update_account_form)
 
 

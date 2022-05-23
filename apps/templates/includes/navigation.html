@@ -24,18 +24,18 @@
                   </a>
                   <div class="dropdown-menu dropdown-menu-animation ms-n3 dropdown-md p-3 border-radius-xl mt-0 mt-lg-3" aria-labelledby="dropdownMenuPages">
                     <div class="d-none d-lg-block">
-                      <a href="/order?pizza" class="dropdown-item border-radius-md">
+                      <a href="/order?food=pizza" class="dropdown-item border-radius-md">
                         <span>Pizzas</span>
                       </a>
-                      <a href="/order?sandwich" class="dropdown-item border-radius-md">
+                      <a href="/order?food=sandwich" class="dropdown-item border-radius-md">
                         <span>Sandwiches</span>
                       </a>
                     </div>
                     <div class="d-lg-none">
-                      <a href="/order?pizza" class="dropdown-item border-radius-md">
+                      <a href="/order?food=pizza" class="dropdown-item border-radius-md">
                         <span>Pizzas</span>
                       </a>
-                      <a href="/order?sandwich" class="dropdown-item border-radius-md">
+                      <a href="/order?food=sandwich" class="dropdown-item border-radius-md">
                         <span>Sandwiches</span>
                       </a>
                     </div>
@@ -84,7 +84,7 @@
                     <a class="nav-link nav-link-icon me-2"
                       href="{{ url_for('authentication_blueprint.logout') }}">
                       <i class="fa fa-sign-out me-1"></i>
-                      <p class="d-inline text-sm z-index-1 font-weight-bold" data-bs-toggle="dropdown" data-bs-placement="bottom">Logout</p>
+                      <p class="d-inline text-sm z-index-1 font-weight-bold" data-bs-toggle="tooltip" data-bs-placement="bottom">Logout</p>
                     </a>
                   </li>
                 {% endif %}

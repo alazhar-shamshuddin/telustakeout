@@ -63,8 +63,7 @@
                   </div>
                 {% elif not success and msg %}
                   <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <span class="alert-icon"><i class="ni ni-like-2"></i></span>
-                    <span class="alert-text"><strong>Oops!</strong> We couldn't update your profile!  {{ msg }}</span>
+                    <span class="alert-text"><strong>Oops!</strong> Please fix the errors below.</span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -74,6 +73,7 @@
                 <form class="row g-3" method="post" action="" novalidate>
                   {{ form.csrf_token }}
                   {{ form.hidden_tag() }}
+
                   <div class="card-body p-0 my-3">
                     <div class="row">
                       <div class="col-md-6 ps-md-2">
@@ -82,6 +82,7 @@
                           {{ form.username(type="text", class="form-control text-gray", disabled="true") }}
                         </div>
                       </div>
+
                       <div class="col-md-6 ps-md-2">
                         <div class="input-group input-group-static mb-4">
                           <label>{{ form.is_employee.label }}</label>
@@ -92,39 +93,13 @@
                           {% endif %}
                         </div>
                       </div>
-                      <div class="col-md-12 ps-md-2">
-                        <div class="input-group input-group-static mb-4">
-                          <label>{{ form.email.label }}</label>
-                          {{ form.email(class="form-control", type="email", placeholder="Email", required="true") }}
-                        </div>
-                      </div>
-                      <div class="col-md-12">
-                        <div class="input-group input-group-static mb-4">
-                          <label>{{ form.full_name.label }}</label>
-                          {{ form.full_name(class="form-control", type="text", placeholder="Full Name") }}
-                        </div>
-                      </div>
-                      <div class="col-md-12 ps-md-2">
-                        <div class="input-group input-group-static mb-4 has-validation">
-                          <label>{{ form.phone.label }}</label>
-                          {{ form.phone(class="form-control", type="tel", placeholder="555-555-5555") }}
-                        </div>
-                      </div>
-                      <div class="col-md-12 ps-md-2">
-                        <div class="input-group input-group-static mb-4">
-                          <label>{{ form.address.label }}</label>
-                          {{ form.address(class="form-control is-valid", type="text", placeholder="123 Main Street, Vancouver, BC V1V 1V1") }}
-                          <div class="valid-feedback">Nice Job!.</div>
-                        </div>
-                      </div>
-                      <div class="col-md-12 ps-md-2">
-                        <div class="input-group input-group-static mb-4">
-                          <label>{{ form.password.label }}</label>
-                          {{ form.password(class="form-control is-invalid", type="password", placeholder="Password") }}
-                          <div class="invalid-feedback">Email address is required.</div>
-                        </div>
-                      </div>
-                      {{ with_errors(form.password, placeholder='foobar') }}
+
+                      {{ with_errors(form.email, placeholder='Email') }}
+                      {{ with_errors(form.full_name, placeholder='Full Name') }}
+                      {{ with_errors(form.phone, type="tel", placeholder="555-555-5555") }}
+                      {{ with_errors(form.address, placeholder="123 Main Street, Vancouver, BC V1V 1V1") }}
+                      {{ with_errors(form.password, placeholder='Password') }}
+
                     </div>
                     <div class="row">
                       <div class="col-md-12 text-center">

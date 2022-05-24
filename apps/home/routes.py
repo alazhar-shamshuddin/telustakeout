@@ -83,8 +83,11 @@ def profile():
 @blueprint.route('/manage-orders')
 @login_required
 def manage_orders():
-    return render_template('home/manage-orders.html',
-                           data=get_order_data(None, all_data=True))
+    if current_user.is_employee:
+        return render_template('home/manage-orders.html',
+                            data=get_order_data(None, all_data=True))
+    else:
+        return render_template('home/page-403.html'), 403
 
 
 @blueprint.route('/order', methods=['GET', 'POST'])
@@ -228,7 +231,17 @@ def generate_choice_tuples(toppings):
 # Get order data
 def get_order_data(username, all_data=False):
     if not all_data:
-        sql = text(f"""SELECT *
+        sql = text(f"""SELECT
+                           o.id
+                           ,o.username
+                           ,o.email
+                           ,o.is_delivery
+                           ,o.address
+                           ,o.phone
+                           ,strftime('%Y-%m-%d %H:%M', o.ordered_at) ordered_at
+                           ,strftime('%Y-%m-%d %H:%M', o.requested_at) requested_at
+                           ,o.status
+                           ,d.*
                     FROM Orders o
                     INNER JOIN OrderDetails d on (d.order_id = o.id)
                     WHERE o.username = :username
@@ -237,10 +250,20 @@ def get_order_data(username, all_data=False):
         result_set = db.engine.execute(sql, username=username)
 
     elif all_data and not username:
-        sql = text(f"""SELECT *
-                    FROM Orders o
-                    INNER JOIN OrderDetails d on (d.order_id = o.id)
-                    ORDER BY o.requested_at desc
+        sql = text(f"""SELECT
+                           o.id
+                           ,o.username
+                           ,o.email
+                           ,o.is_delivery
+                           ,o.address
+                           ,o.phone
+                           ,strftime('%Y-%m-%d %H:%M', o.ordered_at) ordered_at
+                           ,strftime('%Y-%m-%d %H:%M', o.requested_at) requested_at
+                           ,o.status
+                           ,d.*
+                       FROM Orders o
+                       INNER JOIN OrderDetails d on (d.order_id = o.id)
+                       ORDER BY o.requested_at desc
                     """)
 
         result_set = db.engine.execute(sql)
@@ -271,7 +294,7 @@ def save_order(order_form):
     order_header = Orders(
         username=order_form.username.data,
         email=order_form.email.data,
-        is_delivery=False,
+        is_delivery=(True if order_form.delivery_pickup.data == 'delivery' else False),
         address=order_form.address.data,
         phone=order_form.phone.data,
         ordered_at=order_form.ordered_at.data,

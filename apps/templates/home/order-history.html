@@ -1,0 +1,76 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Order History {% endblock %}
+
+{% block body_class %} index-page {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link href="https://unpkg.com/bootstrap-table@1.20.1/dist/bootstrap-table.min.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% macro replace_blanks(item, string) %}
+  {% if item %}
+    {{ item }}
+  {% elif string %}
+    {{ string }}
+  {% endif %}
+{% endmacro %}
+
+{% block content %}
+
+  {% include 'includes/navigation.html' %}
+
+  <div class="page-header min-vh-80" style="background-image: url('https://images.unsplash.com/photo-1630752708689-02c8636b9141?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2490&q=80')">
+    <span class="mask bg-gradient-dark opacity-6"></span>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 mx-auto">
+          <div class="text-center">
+            {% if success %}
+              <h1 class="text-white">Your wish is our command!</h1>
+              <h3 class="text-white">We are working on your order...</h3>
+            {% else %}
+              <h1 class="text-white">Check out your order history!</h1>
+              <h3 class="text-white">Thanks for partnering with <i>Telus</i></h3>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
+    <div class="container">
+      <div class="section text-center">
+        <h2 class="title">Here's your order history</h2>
+      </div>
+    </div>
+    {% if data %}
+      {% include 'includes/orders.html' %}
+    {% else %}
+      <div class="card bg-light my-4 mx-auto" style="width: 20rem;">
+        <img class="card-img-top" src=".\static\assets\img\pizza-02.jpg" alt="Pizza">
+        <div class="card-body">
+          <h5 class="card-title">Oh....</h5>
+          <p class="card-text">You haven't placed any orders with Telus TakeOut.  What are you waiting for!?</p>
+          <div class="col text-center">
+            <a href="/order" class="btn btn-primary">Get me some food!</a>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="https://unpkg.com/bootstrap-table@1.20.1/dist/bootstrap-table.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.20.1/dist/extensions/multiple-sort/bootstrap-table-multiple-sort.js"></script>
+
+<script>
+  $(function() {
+    $('#table').bootstrapTable()
+  })
+</script>
+{% endblock javascripts %}

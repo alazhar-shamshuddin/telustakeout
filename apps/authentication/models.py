@@ -47,8 +47,8 @@ class Orders(db.Model):
     is_delivery = db.Column(db.Boolean, default=False, nullable=False)
     address = db.Column(db.String(255))
     phone = db.Column(db.String(12), nullable=False)
-    ordered_at = db.Column(db.Boolean, default=False, nullable=False)
-    requested_at = db.Column(db.Boolean, default=False, nullable=False)
+    ordered_at = db.Column(db.DateTime(timezone=True), default=False, nullable=False)
+    requested_at = db.Column(db.DateTime(timezone=True), default=False, nullable=False)
     status = db.Column(db.String(12), nullable=False)
 
     def __init__(self, **kwargs):
@@ -71,6 +71,12 @@ class OrderDetails(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, nullable=False)
+    item = db.Column(db.String(64), nullable=False)
+    topping_1 = db.Column(db.String(64), nullable=True)
+    topping_2 = db.Column(db.String(64), nullable=True)
+    topping_3 = db.Column(db.String(64), nullable=True)
+    quantity = db.Column(db.Integer, nullable=False)
+    cost = db.Column(db.Float, nullable=False)
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():

@@ -1,3 +1,5 @@
+from inspect import currentframe
+import json
 from pprint import pprint
 from datetime import datetime, timedelta
 from venv import create
@@ -6,6 +8,7 @@ from apps.home import blueprint
 from flask import render_template, request
 from flask_login import login_required, current_user
 from jinja2 import TemplateNotFound
+from sqlalchemy import select, text
 
 from apps import db
 from apps.authentication.util import hash_pass
@@ -154,15 +157,29 @@ def order():
                 create_order_form.ordered_at.data = datetime.now()
                 create_order_form.status.data = 'ordered'
                 save_order(create_order_form)
-                return render_template('home/order.html',
+                return render_template('home/order-history.html',
                                        success=True,
-                                       form=create_order_form)
+                                       data=get_order_data())
 
         else:
             return render_template('home/order.html',
                                     success=False,
                                     message='Error',
                                     form=create_order_form)
+
+
+@blueprint.route('/order-history', methods=['GET', 'POST'])
+@login_required
+def order_history():
+    sql = text(f"""SELECT *
+                   FROM Orders o
+                   INNER JOIN OrderDetails d on (d.order_id = o.id)
+                   WHERE o.username = :username
+                """)
+    result_set = db.engine.execute(sql, username=current_user.username)
+
+    return render_template('/order-history.html',
+                           data=result_set.fetchall())
 
 
 @blueprint.route('/<template>')
@@ -208,6 +225,31 @@ def generate_choice_tuples(toppings):
     return [(titles[i], toppings[i]) for i in range(0, len(toppings))]
 
 
+# Get order data
+def get_order_data():
+    sql = text(f"""SELECT *
+                   FROM Orders o
+                   INNER JOIN OrderDetails d on (d.order_id = o.id)
+                   WHERE o.username = :username
+                """)
+
+    result_set = db.engine.execute(sql, username=current_user.username)
+
+    return result_set.fetchall()
+
+
+# Helper - repack toppings in a list of length three.
+def repack_toppings(toppings):
+    tmp_list = []
+    for i in range(3):
+        if i < len(toppings):
+            tmp_list.append(toppings[i])
+        else:
+            tmp_list.append(None)
+
+    return tmp_list
+
+
 # Help to save the order to disk.
 def save_order(order_form):
     pprint(order_form.data)
@@ -219,8 +261,31 @@ def save_order(order_form):
         is_delivery=False,
         address=order_form.address.data,
         phone=order_form.phone.data,
-        ordered_at=True,
-        requested_at=True,
+        ordered_at=order_form.ordered_at.data,
+        requested_at=order_form.requested_at.data,
         status=order_form.status.data)
+
     db.session.add(order_header)
+    db.session.commit()
+
+    if order_form.item.data == 'pizza':
+        topping_1, topping_2, topping_3 = \
+            repack_toppings(order_form.pizza_toppings.data)
+    elif order_form.item.data == 'sandwich':
+        topping_1, topping_2, topping_3 = \
+            repack_toppings(order_form.sandwich_toppings.data)
+    else:
+        # @todo: Handle this properly so the app doesn't terminate.
+        raise ValueError(f"Unrecognized order item '{order_form.item.data }'.")
+
+    order_detail = OrderDetails(
+        order_id=order_header.id,
+        item=order_form.item.data,
+        topping_1=topping_1,
+        topping_2=topping_2,
+        topping_3=topping_3,
+        quantity=1,
+        cost=0.00)
+
+    db.session.add(order_detail)
     db.session.commit()

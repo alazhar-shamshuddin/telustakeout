@@ -1,0 +1,52 @@
+<table
+  class="my-4"
+  id="table"
+  data-search="true"
+  data-show-columns="true"
+  data-show-multi-sort="true"
+  data-sort-priority='[{"sortName": "github.count.forks","sortOrder":"desc"},{"sortName":"github.count.stargazers","sortOrder":"desc"}]'>
+  <thead>
+    <tr>
+      <th data-sortable="true">Order ID</th>
+      <th data-sortable="true">Email</th>
+      <th data-sortable="true">Is Delivery</th>
+      <th data-sortable="true">Delivery Address</th>
+      <th data-sortable="true">Contact Number</th>
+      <th data-sortable="true">Ordered At</th>
+      <th data-sortable="true">Requested For</th>
+      <th data-sortable="true">Status</th>
+      <th data-sortable="true">Item</th>
+      <th data-sortable="true">Topping 1</th>
+      <th data-sortable="true">Topping 2</th>
+      <th data-sortable="true">Topping 3</th>
+      <th data-sortable="true">Quantity</th>
+      <th data-sortable="true">Cost</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for record in data %}
+      <tr>
+        <td>{{ record['id'] }}</td>
+        <td>{{ record['email'] }}</td>
+        <td>
+            {% if record['is_delivery'] %}
+            Yes
+            {% else %}
+            No
+            {% endif %}
+        </td>
+        <td>{{ record['address'] }}</td>
+        <td>{{ record['phone'] }}</td>
+        <td>{{ record['ordered_at'] }}</td>
+        <td>{{ record['requested_at'] }}</td>
+        <td>{{ record['status'] }}</td>
+        <td>{{ record['item'] }}</td>
+        <td>{{ replace_blanks(record['topping_1'], "-") }}</td>
+        <td>{{ replace_blanks(record['topping_2'], "-") }}</td>
+        <td>{{ replace_blanks(record['topping_3'], "-") }}</td>
+        <td>{{ record['quantity'] }}</td>
+        <td>{{ "${:.2f}".format(record['cost']) }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

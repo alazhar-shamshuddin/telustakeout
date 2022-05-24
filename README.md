@@ -157,6 +157,7 @@ users: {
 orders: {
   id: int                 # Primary key
   username: str           # Foreign key
+  email: str
   is_delivery: bool
   delivery_address: str   # If is_delivery == True
   phone: str

@@ -150,7 +150,10 @@ def order():
                                         message='Error',
                                         form=create_order_form)
             else:
-                pprint(create_order_form.data)
+                # There are no errors; save the order.
+                create_order_form.ordered_at.data = datetime.now()
+                create_order_form.status.data = 'ordered'
+                save_order(create_order_form)
                 return render_template('home/order.html',
                                        success=True,
                                        form=create_order_form)
@@ -203,3 +206,21 @@ def generate_choice_tuples(toppings):
     titles = [x.lower() for x in toppings]
     titles = [x.replace(' ', '_') for x in titles]
     return [(titles[i], toppings[i]) for i in range(0, len(toppings))]
+
+
+# Help to save the order to disk.
+def save_order(order_form):
+    pprint(order_form.data)
+    print(order_form.username.data)
+
+    order_header = Orders(
+        username=order_form.username.data,
+        email=order_form.email.data,
+        is_delivery=False,
+        address=order_form.address.data,
+        phone=order_form.phone.data,
+        ordered_at=True,
+        requested_at=True,
+        status=order_form.status.data)
+    db.session.add(order_header)
+    db.session.commit()

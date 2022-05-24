@@ -6,6 +6,7 @@ from wtforms import (
     widgets,
     BooleanField,
     DateTimeLocalField,
+    HiddenField,
     PasswordField,
     RadioField,
     SelectMultipleField,
@@ -103,9 +104,9 @@ class CreateOrderForm(FlaskForm):
     pizza_toppings = MultiCheckboxField('Pizza Toppings')
     sandwich_toppings = MultiCheckboxField('Sandwich Toppings')
 
-    # username = HiddenField('Username', validators=[DataRequired()])
-    # ordered_at = HiddenField('Ordered At')
-    # status = HiddenField('Status')
+    username = HiddenField('Username', validators=[DataRequired()])
+    ordered_at = HiddenField('Ordered At')
+    status = HiddenField('Status')
 
 
 class CreateOrderDetailsForm(FlaskForm):

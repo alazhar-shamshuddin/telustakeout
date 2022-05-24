@@ -1,52 +1,66 @@
-<table
-  class="my-4"
-  id="table"
-  data-search="true"
-  data-show-columns="true"
-  data-show-multi-sort="true"
-  data-sort-priority='[{"sortName": "github.count.forks","sortOrder":"desc"},{"sortName":"github.count.stargazers","sortOrder":"desc"}]'>
-  <thead>
-    <tr>
-      <th data-sortable="true">Order ID</th>
-      <th data-sortable="true">Email</th>
-      <th data-sortable="true">Is Delivery</th>
-      <th data-sortable="true">Delivery Address</th>
-      <th data-sortable="true">Contact Number</th>
-      <th data-sortable="true">Ordered At</th>
-      <th data-sortable="true">Requested For</th>
-      <th data-sortable="true">Status</th>
-      <th data-sortable="true">Item</th>
-      <th data-sortable="true">Topping 1</th>
-      <th data-sortable="true">Topping 2</th>
-      <th data-sortable="true">Topping 3</th>
-      <th data-sortable="true">Quantity</th>
-      <th data-sortable="true">Cost</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for record in data %}
+<div class="table-responsive my-4">
+  <table class="table table-bordered table-sm" cellspacing="0" width="100%" id="table">
+    <thead>
       <tr>
-        <td>{{ record['id'] }}</td>
-        <td>{{ record['email'] }}</td>
-        <td>
-            {% if record['is_delivery'] %}
-            Yes
-            {% else %}
-            No
-            {% endif %}
-        </td>
-        <td>{{ record['address'] }}</td>
-        <td>{{ record['phone'] }}</td>
-        <td>{{ record['ordered_at'] }}</td>
-        <td>{{ record['requested_at'] }}</td>
-        <td>{{ record['status'] }}</td>
-        <td>{{ record['item'] }}</td>
-        <td>{{ replace_blanks(record['topping_1'], "-") }}</td>
-        <td>{{ replace_blanks(record['topping_2'], "-") }}</td>
-        <td>{{ replace_blanks(record['topping_3'], "-") }}</td>
-        <td>{{ record['quantity'] }}</td>
-        <td>{{ "${:.2f}".format(record['cost']) }}</td>
+        <th scope="col">Order ID</th>
+        <th scope="col">Email</th>
+        <th scope="col">Is Delivery</th>
+        <th scope="col">Delivery Address</th>
+        <th scope="col">Contact Number</th>
+        <th scope="col">Ordered At</th>
+        <th scope="col">Requested For</th>
+        <th scope="col">Status</th>
+        <th scope="col">Item</th>
+        <th scope="col">Topping 1</th>
+        <th scope="col">Topping 2</th>
+        <th scope="col">Topping 3</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Cost</th>
       </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {% for record in data %}
+        <tr>
+          <td scope="row">{{ record['id'] }}</td>
+          <td>{{ record['email'] }}</td>
+          <td>
+              {% if record['is_delivery'] %}
+              Yes
+              {% else %}
+              No
+              {% endif %}
+          </td>
+          <td>{{ record['address'] }}</td>
+          <td>{{ record['phone'] }}</td>
+          <td>{{ record['ordered_at'] }}</td>
+          <td>{{ record['requested_at'] }}</td>
+          <td>{{ record['status'] }}</td>
+          <td>{{ record['item'] }}</td>
+          <td>{{ replace_blanks(record['topping_1'], "-") }}</td>
+          <td>{{ replace_blanks(record['topping_2'], "-") }}</td>
+          <td>{{ replace_blanks(record['topping_3'], "-") }}</td>
+          <td>{{ record['quantity'] }}</td>
+          <td>{{ "${:.2f}".format(record['cost']) }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th scope="col">Order ID</th>
+        <th scope="col">Email</th>
+        <th scope="col">Is Delivery</th>
+        <th scope="col">Delivery Address</th>
+        <th scope="col">Contact Number</th>
+        <th scope="col">Ordered At</th>
+        <th scope="col">Requested For</th>
+        <th scope="col">Status</th>
+        <th scope="col">Item</th>
+        <th scope="col">Topping 1</th>
+        <th scope="col">Topping 2</th>
+        <th scope="col">Topping 3</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Cost</th>
+      </tr>
+    </tfoot>
+  </table>
+</div>

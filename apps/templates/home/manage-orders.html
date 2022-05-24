@@ -1,23 +1,12 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} Order History {% endblock %}
+{% block title %} Manger Orders {% endblock %}
 
 {% block body_class %} index-page {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
-table.dataTable thead .sorting:after,
-table.dataTable thead .sorting:before,
-table.dataTable thead .sorting_asc:after,
-table.dataTable thead .sorting_asc:before,
-table.dataTable thead .sorting_asc_disabled:after,
-table.dataTable thead .sorting_asc_disabled:before,
-table.dataTable thead .sorting_desc:after,
-table.dataTable thead .sorting_desc:before,
-table.dataTable thead .sorting_desc_disabled:after,
-table.dataTable thead .sorting_desc_disabled:before {
-  bottom: .5em;
-}
+<link href="https://unpkg.com/bootstrap-table@1.20.1/dist/bootstrap-table.min.css" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% macro replace_blanks(item, string) %}
@@ -38,13 +27,8 @@ table.dataTable thead .sorting_desc_disabled:before {
       <div class="row">
         <div class="col-md-8 mx-auto">
           <div class="text-center">
-            {% if success %}
-              <h1 class="text-white">Your wish is our command!</h1>
-              <h3 class="text-white">We are working on your order...</h3>
-            {% else %}
-              <h1 class="text-white">Check out your order history!</h1>
-              <h3 class="text-white">Thanks for partnering with <i>Telus</i></h3>
-            {% endif %}
+              <h1 class="text-white">Manage Telus TakeOut Orders</h1>
+              <h3 class="text-white">Well...view...</em>manage</em> functionality is coming soon!</h3>
           </div>
         </div>
       </div>
@@ -53,7 +37,7 @@ table.dataTable thead .sorting_desc_disabled:before {
   <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
     <div class="container">
       <div class="section text-center">
-        <h2 class="title">Here's your order history</h2>
+        <h2 class="title">Here are <em>all</em> orders in the system</h2>
       </div>
     </div>
     {% if data %}
@@ -63,9 +47,9 @@ table.dataTable thead .sorting_desc_disabled:before {
         <img class="card-img-top" src=".\static\assets\img\pizza-02.jpg" alt="Pizza">
         <div class="card-body">
           <h5 class="card-title">Oh...</h5>
-          <p class="card-text">You haven't placed any orders with Telus TakeOut.  What are you waiting for!?</p>
+          <p class="card-text">Business is <em>not</em> booming!</p>
           <div class="col text-center">
-            <a href="/order" class="btn btn-primary">Get me some food!</a>
+            <a href="/order" class="btn btn-primary">May be you wanna eat?</a>
           </div>
         </div>
       </div>
@@ -76,10 +60,12 @@ table.dataTable thead .sorting_desc_disabled:before {
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
+<script src="https://unpkg.com/bootstrap-table@1.20.1/dist/bootstrap-table.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.20.1/dist/extensions/multiple-sort/bootstrap-table-multiple-sort.js"></script>
+
 <script>
-$(document).ready(function () {
-  $('#table').DataTable();
-  $('.dataTables_length').addClass('bs-select');
-});
+  $(function() {
+    $('#table').bootstrapTable()
+  })
 </script>
 {% endblock javascripts %}

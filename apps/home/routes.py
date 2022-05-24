@@ -80,6 +80,13 @@ def profile():
                                    form=update_account_form)
 
 
+@blueprint.route('/manage-orders')
+@login_required
+def manage_orders():
+    return render_template('home/manage-orders.html',
+                           data=get_order_data(None, all_data=True))
+
+
 @blueprint.route('/order', methods=['GET', 'POST'])
 @login_required
 def order():
@@ -159,7 +166,7 @@ def order():
                 save_order(create_order_form)
                 return render_template('home/order-history.html',
                                        success=True,
-                                       data=get_order_data())
+                                       data=get_order_data(current_user.username))
 
         else:
             return render_template('home/order.html',
@@ -171,15 +178,8 @@ def order():
 @blueprint.route('/order-history', methods=['GET', 'POST'])
 @login_required
 def order_history():
-    sql = text(f"""SELECT *
-                   FROM Orders o
-                   INNER JOIN OrderDetails d on (d.order_id = o.id)
-                   WHERE o.username = :username
-                """)
-    result_set = db.engine.execute(sql, username=current_user.username)
-
-    return render_template('/order-history.html',
-                           data=result_set.fetchall())
+    return render_template('home/order-history.html',
+                           data=get_order_data(current_user.username))
 
 
 @blueprint.route('/<template>')
@@ -226,14 +226,26 @@ def generate_choice_tuples(toppings):
 
 
 # Get order data
-def get_order_data():
-    sql = text(f"""SELECT *
-                   FROM Orders o
-                   INNER JOIN OrderDetails d on (d.order_id = o.id)
-                   WHERE o.username = :username
-                """)
+def get_order_data(username, all_data=False):
+    if not all_data:
+        sql = text(f"""SELECT *
+                    FROM Orders o
+                    INNER JOIN OrderDetails d on (d.order_id = o.id)
+                    WHERE o.username = :username
+                    """)
 
-    result_set = db.engine.execute(sql, username=current_user.username)
+        result_set = db.engine.execute(sql, username=username)
+
+    elif all_data and not username:
+        sql = text(f"""SELECT *
+                    FROM Orders o
+                    INNER JOIN OrderDetails d on (d.order_id = o.id)
+                    """)
+
+        result_set = db.engine.execute(sql)
+
+    else:
+        raise ValueError('Functioned called with unexpected parameters.')
 
     return result_set.fetchall()
 

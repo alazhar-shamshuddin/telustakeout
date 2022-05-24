@@ -240,6 +240,7 @@ def get_order_data(username, all_data=False):
         sql = text(f"""SELECT *
                     FROM Orders o
                     INNER JOIN OrderDetails d on (d.order_id = o.id)
+                    ORDER BY o.requested_at desc
                     """)
 
         result_set = db.engine.execute(sql)

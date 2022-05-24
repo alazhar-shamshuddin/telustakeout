@@ -5,20 +5,7 @@
 {% block body_class %} index-page {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}
-table.dataTable thead .sorting:after,
-table.dataTable thead .sorting:before,
-table.dataTable thead .sorting_asc:after,
-table.dataTable thead .sorting_asc:before,
-table.dataTable thead .sorting_asc_disabled:after,
-table.dataTable thead .sorting_asc_disabled:before,
-table.dataTable thead .sorting_desc:after,
-table.dataTable thead .sorting_desc:before,
-table.dataTable thead .sorting_desc_disabled:after,
-table.dataTable thead .sorting_desc_disabled:before {
-  bottom: .5em;
-}
-{% endblock stylesheets %}
+{% block stylesheets %}{% endblock stylesheets %}
 
 {% macro replace_blanks(item, string) %}
   {% if item %}

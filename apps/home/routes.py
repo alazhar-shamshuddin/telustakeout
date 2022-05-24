@@ -1,5 +1,6 @@
 from pprint import pprint
 from datetime import datetime, timedelta
+from venv import create
 
 from apps.home import blueprint
 from flask import render_template, request
@@ -106,23 +107,28 @@ def order():
             phone=current_user.phone,
             address=current_user.address,
             requested_at=datetime.now() + timedelta(hours=1),
-            item=selectedFood
+            item=selectedFood,
         )
 
+        # Create pizza topping titles that lower cased and with no spaces.
+        create_order_form.pizza_toppings.choices = \
+            generate_choice_tuples(foods['Pizza']['toppings'])
+
+        # Create sandwich topping titles that lower cased and with no spaces.
+        create_order_form.sandwich_toppings.choices = \
+            generate_choice_tuples(foods['Sandwich']['toppings'])
+
         return render_template('home/order.html',
-                               foods=foods,
-                               selectedFood=selectedFood,
                                form=create_order_form)
 
     else:
         create_order_form = CreateOrderForm(request.form)
-        print('data: ')
-        pprint(create_order_form.data)
-        print('validation_erors:' )
-        pprint(create_order_form.errors)
+        create_order_form.pizza_toppings.choices = \
+            generate_choice_tuples(foods['Pizza']['toppings'])
+        create_order_form.sandwich_toppings.choices = \
+            generate_choice_tuples(foods['Sandwich']['toppings'])
 
         if create_order_form.validate_on_submit():
-            pprint('is valid!')
             custom_errors = False
 
             if not create_order_form.delivery_pickup.data:
@@ -139,30 +145,20 @@ def order():
                    'An address is required if you want us to deliver your order.')
 
             if custom_errors:
-                print('found custom errors:')
-                pprint(create_order_form.errors)
                 return render_template('home/order.html',
                                         success=False,
                                         message='Error',
-                                        foods=foods,
-                                        selectedFood=selectedFood,
                                         form=create_order_form)
             else:
-                print('TOTALLy VALID')
-                pprint(request.from_values)
+                pprint(create_order_form.data)
                 return render_template('home/order.html',
-                                    success=True,
-                                    foods=foods,
-                                    selectedFood=selectedFood,
-                                    form=create_order_form)
+                                       success=True,
+                                       form=create_order_form)
 
         else:
-            print('not valid')
             return render_template('home/order.html',
                                     success=False,
                                     message='Error',
-                                    foods=foods,
-                                    selectedFood=selectedFood,
                                     form=create_order_form)
 
 
@@ -200,3 +196,10 @@ def get_segment(request):
 
     except:
         return None
+
+
+# Helper to generate topping choices for the orders form
+def generate_choice_tuples(toppings):
+    titles = [x.lower() for x in toppings]
+    titles = [x.replace(' ', '_') for x in titles]
+    return [(titles[i], toppings[i]) for i in range(0, len(toppings))]

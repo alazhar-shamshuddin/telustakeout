@@ -46,6 +46,7 @@
     <div class="container">
       <form method="post" novalidate>
         {{ form.csrf_token }}
+        {{ form.hidden_tag() }}
 
         <div class="row">
           <div class="col">
@@ -129,7 +130,7 @@
                     </div>
                   </div>
                 {% else %}
-                  <div class="mt-4 px-4">{{ form.item.selected }}</div>
+                  <div class="mt-4 px-4"></div>
                 {% endif %}
               </div>
             </div>
@@ -141,25 +142,18 @@
                 </h4>
               </div>
               <div class="row" id="pizzaToppings">
-                {% for topping in foods['Pizza']['toppings'] %}
-                  {% set id = ('pizza' + topping + 'Checkbox').replace(' ', '') %}
+                {% for topping in form.pizza_toppings %}
                   <div class="form-check col-md-1 ps-md-2 my-4 mx-4">
-                    <input class="form-check-input" type="checkbox" value="" id="{{ id }}">
-                    <label class="form-check-label" for="{{ id }}">
-                      {{ topping }}
-                    </label>
+                    {{ topping(class="form-check-input") }}
+                    {{ topping.label(class='form-check-label')}}
                   </div>
                 {% endfor %}
               </div>
-
               <div class="row" id="sandwichToppings">
-                {% for topping in foods['Sandwich']['toppings'] %}
-                  {% set id = ('sandwich' + topping + 'Checkbox').replace(' ', '') %}
+                {% for topping in form.sandwich_toppings %}
                   <div class="form-check col-md-1 ps-md-2 my-4 mx-4">
-                    <input class="form-check-input" type="checkbox" value="" id="{{ id }}">
-                    <label class="form-check-label" for="{{ id }}">
-                      {{ topping }}
-                    </label>
+                    {{ topping(class="form-check-input") }}
+                    {{ topping.label(class='form-check-label')}}
                   </div>
                 {% endfor %}
               </div>

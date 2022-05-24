@@ -1,28 +1,31 @@
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 from re import L
 from urllib import request
 from xmlrpc.client import Boolean
 from flask_wtf import FlaskForm
 from wtforms import (
+    widgets,
     BooleanField,
-    DateTimeField,
     DateTimeLocalField,
-    HiddenField,
     PasswordField,
     RadioField,
     SelectMultipleField,
     StringField
 )
 from wtforms.validators import (
-    AnyOf,
     DataRequired,
     Email,
-    EqualTo,
     Length
 )
+
+class MultiCheckboxField(SelectMultipleField):
+    """
+    A multiple-select, except displays a list of checkboxes.
+
+    Iterating the field will produce subfields, allowing custom rendering of
+    the enclosed checkbox fields.
+    """
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
 
 
 class LoginForm(FlaskForm):
@@ -97,6 +100,8 @@ class CreateOrderForm(FlaskForm):
         choices=[('pizza','Pizza'), ('sandwich','Sandwich')],
         default=None,
         validators=[DataRequired()])
+    pizza_toppings = MultiCheckboxField('Pizza Toppings')
+    sandwich_toppings = MultiCheckboxField('Sandwich Toppings')
 
     # username = HiddenField('Username', validators=[DataRequired()])
     # ordered_at = HiddenField('Ordered At')

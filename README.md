@@ -13,17 +13,17 @@ an application that includes authentication and an underlying database.
 
 ## Requirements
 The primary objective of this app is to create a takeout ordering system
-for pizzas and subs (sandwiches).
+for pizzas and sandwiches.
 
 1. When ordering takeout, users must specify:
     - Who they are --> their name and phone number
     - When they want to receive their order --> date and time
     - How they want to receive their order --> delivery or pickup
-    - What they want to order --> pizza or sub
+    - What they want to order --> pizza or sandwich
 
 1. If users choose delivery, they must provide a delivery address.
 
-1. If users order pizza, they may select up to 3 toppings from the following
+1. If users order pizzas, they may select up to 3 toppings from the following
    list:
     - Black Olives
     - Mushrooms
@@ -99,13 +99,13 @@ This application is organized as shown below:
    |
    |-- apps/
    |    |
-   |    |-- home/                           # A simple app that serve HTML files
+   |    |-- home/                           # A simple app that serves HTML files
    |    |    |-- routes.py                  # Defined app routes
    |    |
    |    |-- authentication/                 # Handles auth routes (login and signup)
    |    |    |-- routes.py                  # Defines authentication routes
    |    |    |-- models.py                  # Defines models
-   |    |    |-- forms.py                   # Define auth forms (login and signup)
+   |    |    |-- forms.py                   # Define all forms
    |    |
    |    |-- static/
    |    |    |-- <css, JS, images>          # CSS files, JavaScript files
@@ -114,11 +114,11 @@ This application is organized as shown below:
    |    |    |-- includes/                  # HTML chunks and components
    |    |    |    |-- navigation.html       # Top menu component
    |    |    |    |-- sidebar.html          # Sidebar component
-   |    |    |    |-- footer.html           # App Footer
+   |    |    |    |-- footer.html           # App footer
    |    |    |    |-- scripts.html          # Scripts common to all pages
    |    |    |
    |    |    |-- layouts/                   # Master pages
-   |    |    |    |-- base-fullscreen.html  # Used by Authentication pages
+   |    |    |    |-- base-fullscreen.html  # Used by authentication pages
    |    |    |    |-- base.html             # Used by common pages
    |    |    |
    |    |    |-- accounts/                  # Authentication pages
@@ -133,9 +133,9 @@ This application is organized as shown below:
    |  config.py                             # Set up the app
    |    __init__.py                         # Initialize the app
    |
-   |-- requirements.txt                     # App Dependencies
+   |-- requirements.txt                     # App dependencies
    |
-   |-- .env.ps1                             # Inject Configuration via env vars
+   |-- .env.ps1                             # Inject configuration via env vars
    |-- run.py                               # Start the app - WSGI gateway
    |
    |-- ************************************************************************
@@ -159,10 +159,10 @@ orders: {
   username: str           # Foreign key
   email: str
   is_delivery: bool
-  delivery_address: str   # If is_delivery == True
+  delivery_address: str   # If is_delivery == True (or provided by user)
   phone: str
   ordered_at: datetime
-  requested_for: datetime # When the customer wants the order
+  requested_for: datetime # When the customer wants the order (not validated)
   status: str             # [Ordered|Complete|Canceled|Abandoned]
 }
 

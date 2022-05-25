@@ -91,6 +91,12 @@ the private pages, follow this set up:
 - Access the `login` page and authenticate
   - `http://127.0.0.1:5000/login`
 
+Note: the app supports some features that are restricted to Telus TakeOut
+employees.  Currently, the only way to access those features is to ensure
+you are logging into the app as an employee.  To set an existing user as an
+employee, update that user's user.is_employee field to 1 (true) in the database
+directly.
+
 ## Code Structure
 This application is organized as shown below:
 
